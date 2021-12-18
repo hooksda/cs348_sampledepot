@@ -13,11 +13,6 @@
 	<div class='container '>
 		{% include 'options.html' %}
     </div>
-	{%block new%}
-	<form action="{% url 'search' %}" method="get">
-		<input name="q" type="text" placeholder="Search...">
-	  </form>
-	{%endblock new%}
 	{%block content%}
 	<div class="container">
 		<table class="table table-striped">
