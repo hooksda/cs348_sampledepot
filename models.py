@@ -9,10 +9,10 @@ from django.db import models
 
 
 class Comments(models.Model):
-    comment_id = models.IntegerField(primary_key=True)
-    com = models.CharField(max_length=500)
-    music = models.ForeignKey('Music', models.DO_NOTHING, blank=True, null=True)
-    date_made = models.DateField(blank=True, null=True)
+    comment_id = models.AutoField(primary_key=True)
+    com = models.CharField(max_length=500, null = True)
+    music_id = models.ForeignKey('Music', models.SET_NULL, null=True)
+    date_made = models.DateField(auto_now_add = True)
 
     class Meta:
         managed = False
@@ -27,29 +27,14 @@ class Genre(models.Model):
         managed = False
         db_table = 'Genre'
 
-"""
-class Likes(models.Model):
-    user = models.ForeignKey('SampledepotappUsers', models.DO_NOTHING)
-    music = models.ForeignKey('Music', models.DO_NOTHING)
+
+class Liked(models.Model):
+    user = models.ForeignKey('SampledepotappUsers', models.SET_NULL, null=True)
+    music = models.ForeignKey('Music', models.SET_NULL, null=True)
 
     class Meta:
         managed = False
-        db_table = 'Likes'
-"""
-
-class Music(models.Model):
-    music_id = models.AutoField(primary_key=True)
-    title = models.CharField(max_length=100)
-    genre_id = models.IntegerField()
-    comment_id = models.IntegerField()
-    author_id = models.CharField(max_length=40)
-    submission_date = models.DateField(blank=True, null=True)
-    likes = models.IntegerField()
-    comment_count = models.IntegerField()
-
-    class Meta:
-        managed = False
-        db_table = 'Music'
+        db_table = 'Liked'
 
 
 class AuthGroup(models.Model):
@@ -122,9 +107,9 @@ class AuthUserUserPermissions(models.Model):
 
 
 class CommentMade(models.Model):
-    user = models.ForeignKey('SampledepotappUsers', models.DO_NOTHING)
-    music = models.ForeignKey(Music, models.DO_NOTHING)
-    comment = models.ForeignKey(Comments, models.DO_NOTHING)
+    user = models.ForeignKey('SampledepotappUsers', models.SET_NULL, null=True)
+    music = models.ForeignKey('Music', models.SET_NULL, null=True)
+    comment = models.ForeignKey('Comments', models.SET_NULL, null=True)
 
     class Meta:
         managed = False
@@ -181,9 +166,22 @@ class SampledepotappUsers(models.Model):
     first_name = models.CharField(max_length=500)
     last_name = models.CharField(max_length=500)
     username = models.CharField(max_length=500)
-    music_upload = models.ForeignKey(Music, models.DO_NOTHING, blank=True, null=True)
-    date_joined = models.DateField(blank=True, null=True)
+    music = models.ForeignKey('Music', models.SET_NULL, related_name= 'music_made', blank=True, null=True)
+    date_joined = models.DateField(auto_now_add = True)
+
+    class Meta:
+        managed = True
+        db_table = 'sampledepot_users'
+
+class Music(models.Model):
+    music_id = models.AutoField(primary_key=True)
+    title = models.CharField(max_length=100)
+    genre = models.ForeignKey('Genre', models.SET_NULL,  related_name= 'genre', null=True)
+    comment = models.ForeignKey('Comments', models.SET_NULL, related_name= 'comment', null=True)
+    sampledepotappusers = models.ForeignKey('SampledepotappUsers', models.SET_NULL, related_name= 'author', null=True)
+    submission_date = models.DateField(auto_now_add = True)
+    comment_count = models.IntegerField()
 
     class Meta:
         managed = False
-        db_table = 'sampledepotapp_users'
+        db_table = 'Music'
