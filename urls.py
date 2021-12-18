@@ -15,9 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from sampledepotapp import views
-
+from django.views.generic import TemplateView
+from Accounts import views as avw
+from sampledepotapp import views as svw
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('showform', views.showform),
+    path('showform/', svw.showform),
+    path('', svw.showform, name="home"),
+    path('login/', avw.login_view, name="login"),
+    path('logout/', avw.logout_view, name = "logout"),
+    path('new_user/', avw.register_view),
+    path('profile/', avw.profile_view, name = "Profile"),
+    path('upload/', avw.upload_view, name = "Upload"),
+    path('search/', svw.search_view, name = "search")
 ]
